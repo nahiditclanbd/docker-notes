@@ -1,7 +1,3 @@
-# docker images (showing images)
-
-
-
 # Intro and Course Overview
 # What is Docker?
 # What problems Docker solves in development and deployment process
@@ -20,6 +16,7 @@
     - docker run -d nginx:1.23 ( -d or --detach = Run container in background and prints the container ID)
     - docker logs {container id} = view logs from service running inside the container (which are the present at the time of execution)
     - docker stop {container id} (stop one or more running containers)
+    - docker images (showing images)
 
 # Port Binding
     - Bind the container's port to the host's port to make the service available to the outside world. Containers runs on a specific port
@@ -39,9 +36,65 @@
     - docker run --name web-app -d -p 9000:80 nginx:1.23 (--name = Assign a name to the container)
 
 # Private Docker Registries
+    - You need to authenticate before accessing the registry
+    - All big cloud provider offer private Registries: amazon ECR, google container registry etc.
+    - nexus (popular artifact Repository manager)
+    - docker hub
+
 # Registry vs Repository
+    - Docker registry
+        - A Service Providing storage
+        - Can be hosted by third party, like aws or by ourself
+        - Collection of Repositories
+        - Docker hub is a registry
+
+    - Docker Repository
+        - Collection of related images with the same name but different versions.
+
 # Dockerfile - Dockerize Node.js app
+    - build > image > run
+    - Dockerfile - Build instruction ( Dockerfile is a text document that contains commands to assemble an image, Docker can then build an image by reading those instructions)
+    - we need to create a defination of how to build an image from our application.
+    - Dockerfile start from a parent image or "base image", its a docker image that your image is based on. you choose the base image, depending on which tools you need to have available.
+
+    - FROM
+        - Dockerfiles must begin with FROM instruction
+        - Build this image from the specified image
+    - Every image consists of multiple image layers, this makes docker so efficient, because image layers can be cached etc.
+
+    - COPY 
+        - Copies files and directories from <src> and add them to the filesystem of the container at the path <dest>
+        - COPY <src> on our machine <dest> in the container
+
+    - WORKDIR
+        - Sets the working directory for all following commands 
+
+    - RUN 
+        - Will execute any command in a shell inside the container environment
+
+    - CMD 
+        - The instruction that is to be executed when a Docker container starts
+        - There can be only one "CMD" instruction in a Dockerfile
+
+
+    - Example
+    FROM node:19-alpine
+    COPY package.json /app/
+    COPY src /app/
+    WORKDIR /app
+    RUN npm Install
+    CMD ["node", "server.js"]
+
+    - linux operating system
+    - node and npm Install
+    - Copy application files from host into the container
+    - Executing "npm install", to install dependencies
+    - Run the application
+
 # Build Image
-# Docker UI Client
-# Overview: Docker in complete software development lifecycle
-# Where to go from here
+    - docker build -t node:1.0  (-t or --tag = sets a name and optionally a tag in the "name:tag" format)
+    - docker build {path} = Builds a docker image from a Dockerfile
+    - Remember
+        - A Docker image consists of layers
+        - Each instruction in the dockerfile creates one layer
+        - These layers are stacked and each one is a delta of a changes from the previous layer
